@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  dash:
+    # This is for that asking the container to execute the main.py
+    command: python3 main.py
+    # The image I upload to my docker hub
+    image: pratibha2025/ait-ml-a3-dash:latest
+    # For MAC M1 user
+    #platform: linux/x86_64
+    # This will ask DASH to run on 0.0.0.0 and port 80
+    environment:
+      - HOST=0.0.0.0
+      - PORT=80
+    # This is important for asking Traefik to use your container.
+    labels:
+      # Allow Traefik to talk with your service
+      - traefik.enable=true
+      # Tell Traefik to use port 80
+      - traefik.http.services.dash-st125041.loadbalancer.server.port=80
+      # This config you domain name. By default, your subdomain is dash-st125041
+      # If you which to change the subdomain name, you uncomment the below configuration
+      - traefik.http.routers.dash-st125041.rule=Host(`st125041.ml.brain.cs.ait.ac.th`)
+      # Below is for enable SSL.
+      - traefik.http.routers.dash-st125041.tls=true
+      - traefik.http.routers.dash-st125041.tls.certresolver=production
+      - traefik.http.routers.dash-st125041.entrypoints=websecure
+    # This define network. You would need to keep it like this.
+    networks:
+      - default
+      - traefik_default
+
+# Keep it like this too.
+networks:
+  default:
+  traefik_default:
+    external: true
