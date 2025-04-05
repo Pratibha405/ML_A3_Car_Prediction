@@ -5,21 +5,25 @@ import joblib
 import numpy as np
 import pandas as pd
 import os
-import pickle
+import cloudpickle
 import mlflow
+
 
 # MLflow Setup
 mlflow.set_tracking_uri("https://mlflow.ml.brain.cs.ait.ac.th")
 os.environ["MLFLOW_TRACKING_USERNAME"] = "admin"
 os.environ["MLFLOW_TRACKING_PASSWORD"] = "password"
 
-model_name = "st125041-a3-model"
-model_version = 3
 scaler_path = '../code/model/scaler.dump'
+model_name = "st125041-a3-model"
+client = mlflow.tracking.MlflowClient()
 
-# Load model and scaler
-model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/{model_version}")
-scaler = pickle.load(open(scaler_path, 'rb'))
+# Use alias instead of deprecated 'stages' approach
+latest_version = client.get_model_version_by_alias(model_name, "staging").version
+
+# Load model using that version
+model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/{latest_version}")
+scaler = cloudpickle.load(open(scaler_path, 'rb'))
 
 # Feature columns and default values
 num_cols = ['year', 'mileage', 'max_power']
