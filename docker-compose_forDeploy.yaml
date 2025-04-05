@@ -1,11 +1,11 @@
-version: '3.9'
+version: '3.12.6'
 
 services:
   dash:
     # This is for that asking the container to execute the main.py
     command: python3 main.py
     # The image I upload to my docker hub
-    image: pratibha2025/ait-ml-a3-dash:latest
+    image: pratibha2025/ait-ml-a3-dash:latest1
     # For MAC M1 user
     #platform: linux/x86_64
     # This will ask DASH to run on 0.0.0.0 and port 80
